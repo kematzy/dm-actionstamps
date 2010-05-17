@@ -1,6 +1,159 @@
 = dm-actionstamps
 
-Description goes here.
+A DataMapper plugin that works similar to the dm-timestamps in that it 'automagically' adds/updates the
+created_?, updated_? fields of your models.
+
+This is a completely rewritten version of the rlivesey's dm-userstamp gem. 
+
+It was rewritten and given a new new when I made more dynamic in nature than dm-userstamp.
+
+
+== Installation
+  
+  $  (sudo)? gem install dm-actionstamps
+  
+<b>NB! Depends upon the whole DataMapper suite being installed, and has ONLY been tested with DM 0.10.2.</b>
+
+
+== Getting Started
+
+
+
+Require <tt>dm-actionstamps</tt> in your app.
+
+  require 'dm-core'         # must be required first
+  require 'dm-actionstamps'
+
+
+Lets say we have a User class and we want to track the user actions in our other models. Just do as follows:
+
+  class User
+    include DataMapper::Resource
+    property :id, Serial
+    property :name, String
+    
+    provides_actionstamps
+    
+  end
+  
+
+By declaring <tt>:provides_actionstamps</tt> in your User model, you get the following functionality free.
+
+  User.current_user = new user...
+  
+  User.current_user  => retrieves the current_user
+  
+  
+You can then use it as follows:
+  
+  @user = User.create(:id => 99, :name => "Joe")
+  
+  User.current_user = @user
+  
+  
+  # retrieve the current user info.
+  User.current_user.id   =>  returns 99
+  
+
+OK, so far not so exciting, but lets say we have an Article class, and we want to track the User that 
+created the Article and the last User that updated the Article. It's easy too:
+
+    class Article
+      include DataMapper::Resource
+      property :id,     Serial
+      property :title,   String
+      ...<snip>
+      
+      actionstamps :by, User
+      
+    end
+    
+Once you have your Article model we can create our Articles just as normal:
+
+    @article = Article.create(:title => 'Example 1')
+    
+
+The instance of <tt>Article.get(1)</tt> now has the following things for free:
+
+* a <tt>:created_by</tt> attribute with the value of <tt>User.current_user.id</tt> if set. Default value is <tt>nil</tt>.
+
+* a <tt>:updated_by</tt> attribute with the value of <tt>User.current_user.id</tt> if set. Default value is <tt>nil</tt>.
+
+
+So given this usage scenario:
+
+  @user = User.create(:id => 99, :name => "Joe")
+  User.current_user = @user
+  
+  @article = Article.create(:title => 'Example 2')
+  
+  
+The Article instance should have the following:
+
+  @article.created_by   => 99
+  @article.updated_by   => 99
+  
+
+== Customisations
+
+<tt>dm-actionstamps</tt> plugin/gem was created because I needed to track the actions of Client, Staff and other 'User' models, 
+and the <tt>"dm-userstamp"[http://github.com/rlivesey/dm-userstamp]</tt> gem was hardcoded to the <tt>User</tt> model.
+
+To support more flexible declarations, I have separated out the functionality into two parts:
+
+* Provider Model
+* Receiver Model
+
+
+The Provider Model provides the actionstamps, and can be declared like this:
+
+  class Client
+    include DataMapper::Resource
+    property :id, Serial
+    property :name, String
+    
+    provides_actionstamps
+    
+  end
+  
+In difference to the examples above, the <tt>current_?</tt> methods takes the name of the Model that was given the provider status (via the <tt>:provides_actionstamps</tt> method):
+  
+  Client.current_client =  Client.create(:id => 88, :name => "Happy")
+  
+  Client.current_client   => returns the Client
+  
+
+
+The Receiver Model receives the actionstamps and can be declared like this:
+
+
+  class Bill
+    include DataMapper::Resource
+    property :id,     Serial
+    property :amount, Integer
+    ...<snip>
+  
+    actionstamps :by, Client
+  
+  end
+  
+  
+So when we create a new instance of Bill, we get the values from the Client.current_client method:
+  
+  @bill = Bill.create(:amount => "100")
+  
+  @bill.created_by   =>  88
+    
+
+== RTFM 
+
+As I said above, for a better understanding of this gem/plugin, make sure you study the '<tt>dm-actionstamps/spec/integration/actionstamps_spec.rb</tt>' file.
+
+
+== Errors / Bugs
+
+If something is not behaving intuitively, it is a bug, and should be reported.
+Report it here: http://github.com/kematzy/dm-actionstamps/issues
 
 == Note on Patches/Pull Requests
  
@@ -9,9 +162,10 @@ Description goes here.
 * Add tests for it. This is important so I don't break it in a
   future version unintentionally.
 * Commit, do not mess with rakefile, version, or history.
-  (if you want to have your own version, that is fine but bump version in a commit by itself I can ignore when I pull)
+  * (if you want to have your own version, that is fine but bump version in a commit by itself I can ignore when I pull)
 * Send me a pull request. Bonus points for topic branches.
 
 == Copyright
 
-Copyright (c) 2010 kematzy. See LICENSE for details.
+Copyright (c) 2010 kematzy. Released under the MIT license.
+
