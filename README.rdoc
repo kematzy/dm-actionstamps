@@ -3,7 +3,7 @@
 A DataMapper plugin that works similar to the dm-timestamps in that it 'automagically' adds/updates the
 created_?, updated_? fields of your models.
 
-This is a completely rewritten version of the rlivesey's dm-userstamp gem. 
+This is a completely rewritten version of the "rlivesey's"[http://github.com/rlivsey/] <tt>"dm-userstamp"[http://github.com/rlivsey/dm-userstamp]</tt> gem. 
 
 It was rewritten and given a new new when I made more dynamic in nature than dm-userstamp.
 
@@ -97,7 +97,7 @@ The Article instance should have the following:
 == Customisations
 
 <tt>dm-actionstamps</tt> plugin/gem was created because I needed to track the actions of Client, Staff and other 'User' models, 
-and the <tt>"dm-userstamp"[http://github.com/rlivesey/dm-userstamp]</tt> gem was hardcoded to the <tt>User</tt> model.
+and the <tt>"dm-userstamp"[http://github.com/rlivsey/dm-userstamp]</tt> gem was hardcoded to the <tt>User</tt> model.
 
 To support more flexible declarations, I have separated out the functionality into two parts:
 
@@ -145,9 +145,18 @@ So when we create a new instance of Bill, we get the values from the Client.curr
   @bill.created_by   =>  88
     
 
+== TODO
+
+* Contemplate if there is ever a scenario where you need to track two different models updating the same record?  (Seller vs Buyers ?)
+
+* Think of some clever way to automagically set "User.current_user = @user" when you load or create a new User in your enclosing application.
+
+* Any other improvements that you can think of?
+
+
 == RTFM 
 
-As I said above, for a better understanding of this gem/plugin, make sure you study the '<tt>dm-actionstamps/spec/integration/actionstamps_spec.rb</tt>' file.
+For a better understanding of this gem/plugin, make sure you study the '<tt>dm-actionstamps/spec/integration/actionstamps_spec.rb</tt>' file.
 
 
 == Errors / Bugs
