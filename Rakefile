@@ -5,8 +5,8 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "dm-actionstamps"
-    gem.summary = %Q{=}
-    gem.description = %Q{TODO: longer description of your gem}
+    gem.summary = %Q{A DataMapper plugin that automatically adds/updates the created_?, updated_? fields of your models.}
+    gem.description = %Q{A DataMapper plugin that works similar to the dm-timestamps in that it 'automagically' adds/updates the created_?, updated_? fields of your models.}
     gem.email = "kematzy@gmail.com"
     gem.homepage = "http://github.com/kematzy/dm-actionstamps"
     gem.authors = ["kematzy"]
