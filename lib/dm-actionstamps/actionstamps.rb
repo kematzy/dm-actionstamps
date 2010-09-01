@@ -1,6 +1,5 @@
 
 require 'dm-core'
-require 'extlib/inflection'
 
 module DataMapper 
   module Actionstamps 
